@@ -1,0 +1,260 @@
+{
+  "annotations": {
+    "list": []
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [],
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "#10B981", "value": null }] },
+          "unit": "s"
+        }
+      },
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
+      "id": 1,
+      "options": { "colorMode": "value", "graphMode": "area", "justifyMode": "auto", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false } },
+      "pluginVersion": "9.5.0",
+      "targets": [
+        { "expr": "process_uptime_seconds{job=\"spring-boot\"}", "legendFormat": "", "refId": "A" }
+      ],
+      "title": "进程运行时间",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [],
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "#10B981", "value": null }] },
+          "unit": "percent"
+        }
+      },
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
+      "id": 2,
+      "options": { "colorMode": "background", "graphMode": "area", "justifyMode": "auto", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false } },
+      "pluginVersion": "9.5.0",
+      "targets": [
+        { "expr": "sum(jvm_memory_used_bytes{job=\"spring-boot\", area=\"heap\"}) / sum(jvm_memory_max_bytes{job=\"spring-boot\", area=\"heap\"}) * 100", "legendFormat": "", "refId": "A" }
+      ],
+      "title": "JVM 堆内存使用率",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [],
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "#10B981", "value": null }, { "color": "#F59E0B", "value": 250 }] },
+          "unit": "short"
+        }
+      },
+      "gridPos": { "h": 4, "w": 6, "x": 12, "y": 0 },
+      "id": 3,
+      "options": { "colorMode": "value", "graphMode": "area", "justifyMode": "auto", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false } },
+      "pluginVersion": "9.5.0",
+      "targets": [
+        { "expr": "jvm_threads_live_threads{job=\"spring-boot\"}", "legendFormat": "", "refId": "A" }
+      ],
+      "title": "活跃线程数",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [],
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "#4F46E5", "value": null }] },
+          "unit": "short"
+        }
+      },
+      "gridPos": { "h": 4, "w": 6, "x": 18, "y": 0 },
+      "id": 4,
+      "options": { "colorMode": "value", "graphMode": "area", "justifyMode": "auto", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false } },
+      "pluginVersion": "9.5.0",
+      "targets": [
+        { "expr": "process_cpu_usage{job=\"spring-boot\"} * 100", "legendFormat": "", "refId": "A" }
+      ],
+      "title": "CPU 使用率 (%)",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": { "axisCenteredZero": false, "axisColorMode": "text", "axisPlacement": "auto", "fillOpacity": 20, "gradientMode": "opacity", "lineWidth": 2, "pointSize": 5, "showPoints": "never", "spanNulls": true },
+          "mappings": [],
+          "unit": "bytes"
+        }
+      },
+      "gridPos": { "h": 10, "w": 12, "x": 0, "y": 4 },
+      "id": 5,
+      "options": { "legend": { "calcs": ["last", "max"], "displayMode": "table", "placement": "bottom" }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "pluginVersion": "9.5.0",
+      "targets": [
+        { "expr": "jvm_memory_used_bytes{job=\"spring-boot\", area=\"heap\"}", "legendFormat": "Heap Used", "refId": "A" },
+        { "expr": "jvm_memory_max_bytes{job=\"spring-boot\", area=\"heap\"}", "legendFormat": "Heap Max", "refId": "B" }
+      ],
+      "title": "JVM 堆内存",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": { "axisCenteredZero": false, "axisColorMode": "text", "axisPlacement": "auto", "fillOpacity": 20, "gradientMode": "opacity", "lineWidth": 2, "pointSize": 5, "showPoints": "never", "spanNulls": true },
+          "mappings": [],
+          "unit": "bytes"
+        }
+      },
+      "gridPos": { "h": 10, "w": 12, "x": 12, "y": 4 },
+      "id": 6,
+      "options": { "legend": { "calcs": ["last"], "displayMode": "table", "placement": "bottom" }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "pluginVersion": "9.5.0",
+      "targets": [
+        { "expr": "jvm_memory_used_bytes{job=\"spring-boot\", area=\"nonheap\"}", "legendFormat": "{{id}}", "refId": "A" }
+      ],
+      "title": "JVM 非堆内存",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": { "axisCenteredZero": false, "axisColorMode": "text", "axisPlacement": "auto", "fillOpacity": 20, "gradientMode": "opacity", "lineWidth": 2, "pointSize": 5, "showPoints": "never", "spanNulls": true },
+          "mappings": [],
+          "unit": "short"
+        }
+      },
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 14 },
+      "id": 7,
+      "options": { "legend": { "calcs": [], "displayMode": "table", "placement": "bottom" }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "pluginVersion": "9.5.0",
+      "targets": [
+        { "expr": "rate(jvm_gc_pause_seconds_count{job=\"spring-boot\"}[1m])", "legendFormat": "{{action}}", "refId": "A" }
+      ],
+      "title": "GC 频率 (次/秒)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": { "axisCenteredZero": false, "axisColorMode": "text", "axisPlacement": "auto", "fillOpacity": 20, "gradientMode": "opacity", "lineWidth": 2, "pointSize": 5, "showPoints": "never", "spanNulls": true },
+          "mappings": [],
+          "unit": "s"
+        }
+      },
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 14 },
+      "id": 8,
+      "options": { "legend": { "calcs": ["max"], "displayMode": "table", "placement": "bottom" }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "pluginVersion": "9.5.0",
+      "targets": [
+        { "expr": "rate(jvm_gc_pause_seconds_sum{job=\"spring-boot\"}[1m])", "legendFormat": "{{action}}", "refId": "A" }
+      ],
+      "title": "GC 耗时 (秒/秒)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": { "axisCenteredZero": false, "axisColorMode": "text", "axisPlacement": "auto", "fillOpacity": 20, "gradientMode": "opacity", "lineWidth": 2, "pointSize": 5, "showPoints": "never", "spanNulls": true },
+          "mappings": [],
+          "unit": "short"
+        }
+      },
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 14 },
+      "id": 9,
+      "options": { "legend": { "calcs": ["last"], "displayMode": "table", "placement": "bottom" }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "pluginVersion": "9.5.0",
+      "targets": [
+        { "expr": "jvm_threads_states_threads{job=\"spring-boot\"}", "legendFormat": "{{state}}", "refId": "A" }
+      ],
+      "title": "线程状态分布",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": { "axisCenteredZero": false, "axisColorMode": "text", "axisPlacement": "auto", "fillOpacity": 20, "gradientMode": "opacity", "lineWidth": 2, "pointSize": 5, "showPoints": "never", "spanNulls": true },
+          "mappings": [],
+          "unit": "reqps"
+        }
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 22 },
+      "id": 10,
+      "options": { "legend": { "calcs": ["last", "max"], "displayMode": "table", "placement": "bottom" }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "pluginVersion": "9.5.0",
+      "targets": [
+        { "expr": "rate(http_server_requests_seconds_count{job=\"spring-boot\"}[1m])", "legendFormat": "{{uri}}", "refId": "A" }
+      ],
+      "title": "HTTP 请求速率 (req/s)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": { "axisCenteredZero": false, "axisColorMode": "text", "axisPlacement": "auto", "fillOpacity": 20, "gradientMode": "opacity", "lineWidth": 2, "pointSize": 5, "showPoints": "never", "spanNulls": true },
+          "mappings": [],
+          "unit": "s"
+        }
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 22 },
+      "id": 11,
+      "options": { "legend": { "calcs": ["last", "max"], "displayMode": "table", "placement": "bottom" }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "pluginVersion": "9.5.0",
+      "targets": [
+        { "expr": "histogram_quantile(0.99, rate(http_server_requests_seconds_bucket{job=\"spring-boot\"}[1m]))", "legendFormat": "p99 {{uri}}", "refId": "A" },
+        { "expr": "histogram_quantile(0.50, rate(http_server_requests_seconds_bucket{job=\"spring-boot\"}[1m]))", "legendFormat": "p50 {{uri}}", "refId": "B" }
+      ],
+      "title": "HTTP 请求延迟",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "30s",
+  "schemaVersion": 38,
+  "tags": ["spring-boot", "jvm", "prometheus"],
+  "templating": {
+    "list": [
+      {
+        "current": { "selected": false, "text": "Prometheus", "value": "Prometheus" },
+        "hide": 0,
+        "includeAll": false,
+        "label": "数据源",
+        "name": "DS_PROMETHEUS",
+        "options": [],
+        "query": "prometheus",
+        "refresh": 1,
+        "regex": "",
+        "type": "datasource"
+      }
+    ]
+  },
+  "time": { "from": "now-15m", "to": "now" },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Spring Boot 应用监控",
+  "uid": "spring-boot-app",
+  "version": 1,
+  "weekStart": ""
+}

@@ -45,13 +45,13 @@ public class SecurityConfig {
             }
             //允许跨域请求的OPTIONS请求
             registry.requestMatchers(HttpMethod.OPTIONS).permitAll();
-            //任何请求需要身份认证
+            //任何请求需要身份认证（有动态权限配置时添加动态权限管理器）
+            registry.anyRequest().access(
+                dynamicAuthorizationManager == null
+                    ? AuthenticatedAuthorizationManager.authenticated()
+                    : dynamicAuthorizationManager
+            );
         })
-        //任何请求需要身份认证
-        .authorizeHttpRequests(registry-> registry.anyRequest()
-            //有动态权限配置时添加动态权限管理器
-            .access(dynamicAuthorizationManager==null? AuthenticatedAuthorizationManager.authenticated():dynamicAuthorizationManager)
-        )
         //关闭跨站请求防护
         .csrf(AbstractHttpConfigurer::disable)
         //修改Session生成策略为无状态会话
