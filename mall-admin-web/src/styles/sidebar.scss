@@ -1,0 +1,157 @@
+@use './variables.scss' as v;
+
+#app {
+  .main-container {
+    min-height: 100%;
+    transition: margin-left v.$transition-normal;
+    margin-left: v.$sidebarWidth;
+  }
+
+  .sidebar-container {
+    transition: width v.$transition-normal;
+    width: v.$sidebarWidth !important;
+    height: 100%;
+    position: fixed;
+    font-size: 0;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1001;
+    overflow: hidden;
+    background: v.$menuBg;
+
+    a {
+      display: inline-block;
+      width: 100%;
+    }
+
+    .svg-icon {
+      margin-right: 16px;
+    }
+
+    .el-menu {
+      border: none;
+      width: 100% !important;
+      background: transparent !important;
+    }
+
+    // Menu items
+    .el-menu-item,
+    .el-sub-menu__title {
+      color: v.$menuText !important;
+      height: 48px !important;
+      line-height: 48px !important;
+      margin: 2px 8px;
+      border-radius: v.$menuItemBorderRadius;
+      transition: all v.$transition-fast;
+
+      &:hover {
+        color: #fff !important;
+        background-color: v.$menuHover !important;
+      }
+
+      .svg-icon {
+        color: v.$menuText;
+        transition: color v.$transition-fast;
+      }
+
+      &:hover .svg-icon {
+        color: #fff;
+      }
+    }
+
+    // Active menu item
+    .el-menu-item.is-active {
+      color: v.$menuActiveText !important;
+      background: v.$menuActiveBg !important;
+
+      .svg-icon {
+        color: v.$menuActiveText;
+      }
+    }
+
+    // Sub-menu parent active
+    .el-sub-menu.is-active > .el-sub-menu__title {
+      color: #fff !important;
+    }
+  }
+
+  // Collapsed sidebar
+  .hideSidebar {
+    .sidebar-container {
+      width: v.$sidebarCollapsedWidth !important;
+    }
+
+    .main-container {
+      margin-left: v.$sidebarCollapsedWidth;
+    }
+
+    .submenu-title-noDropdown {
+      padding-left: 10px !important;
+      position: relative;
+
+      .el-tooltip {
+        padding: 0 10px !important;
+      }
+    }
+
+    .el-sub-menu {
+      & > .el-sub-menu__title {
+        padding-left: 12px !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        & > span {
+          display: none;
+        }
+
+        .el-sub-menu__icon-arrow {
+          display: none;
+        }
+      }
+    }
+  }
+
+  // Nested menus
+  .sidebar-container .nest-menu .el-sub-menu > .el-sub-menu__title,
+  .sidebar-container .el-sub-menu .el-menu-item {
+    min-width: v.$sidebarWidth !important;
+    background-color: v.$subMenuBg !important;
+
+    &:hover {
+      background-color: v.$menuHover !important;
+    }
+  }
+
+  .el-menu--collapse .el-menu .el-sub-menu {
+    min-width: v.$sidebarWidth !important;
+  }
+
+  // Mobile
+  .mobile {
+    .main-container {
+      margin-left: 0;
+    }
+
+    .sidebar-container {
+      top: 50px;
+      transition: transform v.$transition-normal;
+      width: v.$sidebarWidth !important;
+    }
+
+    &.hideSidebar {
+      .sidebar-container {
+        transition-duration: v.$transition-slow;
+        transform: translate3d(-#{v.$sidebarWidth}, 0, 0);
+      }
+    }
+  }
+
+  .withoutAnimation {
+    .main-container,
+    .sidebar-container {
+      transition: none;
+    }
+  }
+}

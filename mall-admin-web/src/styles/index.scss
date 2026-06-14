@@ -1,0 +1,150 @@
+@use './variables.scss' as v;
+@use './mixin.scss';
+@use './transition.scss';
+@use './sidebar.scss';
+
+// ============================================================
+// Global Styles — ShopDeck Admin
+// ============================================================
+
+html {
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: v.$bg-page;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-family:
+    Inter,
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    'Helvetica Neue',
+    Arial,
+    'PingFang SC',
+    'Hiragino Sans GB',
+    'Microsoft YaHei',
+    sans-serif;
+  color: v.$text-primary;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+div:focus {
+  outline: none;
+}
+
+a:focus,
+a:active {
+  outline: none;
+}
+
+a,
+a:focus,
+a:hover {
+  cursor: pointer;
+  color: inherit;
+  text-decoration: none;
+}
+
+// ============================================================
+// Layout
+// ============================================================
+
+.app-main {
+  min-height: calc(100vh - #{v.$navbarHeight});
+  background: v.$bg-page;
+}
+
+.app-container {
+  padding: 24px;
+}
+
+// ============================================================
+// Utility Classes (colors via Element Plus CSS vars)
+// ============================================================
+
+.color-main { color: var(--el-color-primary); }
+.color-success { color: var(--el-color-success); }
+.color-warning { color: var(--el-color-warning); }
+.color-danger { color: var(--el-color-danger); }
+.color-info { color: v.$text-secondary; }
+.color-secondary { color: v.$text-secondary; }
+
+// Typography
+.font-extra-large { font-size: 20px; color: v.$text-primary; font-weight: 600; }
+.font-title-large { font-size: 18px; color: v.$text-primary; font-weight: 600; }
+.font-title-medium { font-size: 16px; color: v.$text-primary; font-weight: 500; }
+.font-medium { font-size: 15px; color: v.$text-regular; }
+.font-small { font-size: 14px; color: v.$text-regular; }
+.font-extra-small { font-size: 13px; color: v.$text-secondary; }
+
+// ============================================================
+// Component Layout Helpers
+// ============================================================
+
+.filter-container {
+  background: v.$bg-card;
+  border-radius: v.$border-radius;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: v.$shadow-sm;
+}
+
+.operate-container {
+  margin-top: 16px;
+
+  .btn-add {
+    float: right;
+  }
+}
+
+.table-container {
+  background: v.$bg-card;
+  border-radius: v.$border-radius;
+  padding: 20px;
+  margin-top: 16px;
+  box-shadow: v.$shadow-sm;
+}
+
+.batch-operate-container {
+  display: inline-flex;
+  width: 250px;
+  margin-top: 16px;
+}
+
+.pagination-container {
+  display: inline-flex;
+  float: right;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.form-container {
+  position: absolute;
+  left: 0;
+  right: 0;
+  width: 720px;
+  padding: 35px 35px 15px 35px;
+  margin: 20px auto;
+  background: v.$bg-card;
+  border-radius: v.$border-radius-lg;
+  box-shadow: v.$shadow-md;
+}
+
+// Icon vertical align helper
+.el-icon-middle {
+  vertical-align: middle;
+  margin-right: 4px;
+  margin-top: -2px;
+}

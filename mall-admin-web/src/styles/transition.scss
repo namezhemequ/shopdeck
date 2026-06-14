@@ -1,0 +1,26 @@
+/* fade */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.28s;
+}
+
+.fade-enter,
+.fade-leave-active {
+  opacity: 0;
+}
+
+/* breadcrumb */
+.breadcrumb-enter-active,
+.breadcrumb-leave-active {
+  transition: all 0.4s ease;
+}
+
+.breadcrumb-enter,
+.breadcrumb-leave-active {
+  opacity: 0;
+  transform: translateX(16px);
+}
+
+.breadcrumb-move {
+  transition: all 0.4s ease;
+}
