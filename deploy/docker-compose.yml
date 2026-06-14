@@ -124,7 +124,7 @@ services:
     environment:
       GF_SECURITY_ADMIN_USER: admin
       GF_SECURITY_ADMIN_PASSWORD: admin
-      GF_SERVER_ROOT_URL: https://shopdeck.tech/grafana/
+      GF_SERVER_ROOT_URL: https://121.40.254.92/grafana/
       GF_SERVER_SERVE_FROM_SUB_PATH: "true"
     volumes:
       - grafana-data:/var/lib/grafana
