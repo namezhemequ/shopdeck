@@ -1,0 +1,222 @@
+services:
+  # ============================================================
+  # MySQL 8.0 — 关系型数据库
+  # ============================================================
+  mysql:
+    image: mysql:8.0
+    container_name: mall-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: "123456"
+      MYSQL_DATABASE: mall
+      TZ: Asia/Shanghai
+    ports:
+      - "3316:3306"
+    volumes:
+      # 数据持久化
+      - mysql-data:/var/lib/mysql
+      # 首次启动自动执行初始化 SQL
+      - ./document/sql/mall.sql:/docker-entrypoint-initdb.d/01-mall.sql
+    networks:
+      - mall-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p123456"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_general_ci
+      - --default-authentication-plugin=mysql_native_password
+
+  # ============================================================
+  # Redis 7 Alpine — 缓存
+  # ============================================================
+  redis:
+    image: redis:7-alpine
+    container_name: mall-redis
+    restart: unless-stopped
+    ports:
+      - "6381:6379"
+    volumes:
+      # 数据持久化（RDB + AOF）
+      - redis-data:/data
+    networks:
+      - mall-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    command: redis-server --appendonly yes
+
+  # ============================================================
+  # mall-admin — Spring Boot 后台管理接口
+  # ============================================================
+  admin:
+    build:
+      context: .
+      dockerfile: mall-admin/Dockerfile
+    image: mall-admin:1.0
+    container_name: mall-admin
+    restart: unless-stopped
+    ports:
+      - "8081:8080"
+    environment:
+      # 覆盖 application-dev.yml 中的 localhost → 容器服务名
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/mall?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useSSL=false
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: "123456"
+      SPRING_DATA_REDIS_HOST: redis
+      TZ: Asia/Shanghai
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - mall-network
+
+  # ============================================================
+  # Nginx — 前端静态文件 + API 反向代理
+  # ============================================================
+  nginx:
+    image: nginx:alpine
+    container_name: mall-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ../mall-admin-web/dist:/usr/share/nginx/html:ro
+      - ./www.shopdeck.tech.pem:/etc/nginx/certs/www.shopdeck.tech.pem:ro
+      - ./www.shopdeck.tech.key:/etc/nginx/certs/www.shopdeck.tech.key:ro
+    depends_on:
+      - admin
+    networks:
+      - mall-network
+
+  # ============================================================
+  # Prometheus — 指标采集
+  # ============================================================
+  prometheus:
+    image: prom/prometheus
+    container_name: mall-prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./deploy/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=30d'
+      - '--web.external-url=https://shopdeck.tech/prometheus/'
+      - '--web.route-prefix=/'
+    networks:
+      - mall-network
+
+  # ============================================================
+  # Grafana — 可视化仪表盘
+  # ============================================================
+  grafana:
+    image: grafana/grafana
+    container_name: mall-grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_SERVER_ROOT_URL: https://shopdeck.tech/grafana/
+      GF_SERVER_SERVE_FROM_SUB_PATH: "true"
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./deploy/grafana/datasources:/etc/grafana/provisioning/datasources:ro
+      - ./deploy/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+    networks:
+      - mall-network
+
+  # ============================================================
+  # cAdvisor — 容器资源监控（CPU/内存/网络/IO）
+  # ============================================================
+  cadvisor:
+    image: google/cadvisor:latest
+    container_name: mall-cadvisor
+    restart: unless-stopped
+    ports:
+      - "8088:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    privileged: true
+    networks:
+      - mall-network
+
+  # ============================================================
+  # Node Exporter — 宿主机指标采集
+  # ============================================================
+  node_exporter:
+    image: prom/node-exporter
+    container_name: mall-node-exporter
+    restart: unless-stopped
+    ports:
+      - "9100:9100"
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--path.rootfs=/rootfs'
+    networks:
+      - mall-network
+
+  # ============================================================
+  # Jenkins — CI/CD 流水线
+  # ============================================================
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: mall-jenkins
+    restart: unless-stopped
+    ports:
+      - "8090:8080"
+      - "50000:50000"
+    environment:
+      TZ: Asia/Shanghai
+      JENKINS_OPTS: --prefix=/jenkins
+    volumes:
+      - jenkins-data:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /usr/bin/docker:/usr/bin/docker
+    networks:
+      - mall-network
+
+# ============================================================
+# 自定义网络
+# ============================================================
+networks:
+  mall-network:
+    driver: bridge
+    name: mall-network
+
+# ============================================================
+# 命名卷（数据持久化）
+# ============================================================
+volumes:
+  mysql-data:
+    name: mall-mysql-data
+  redis-data:
+    name: mall-redis-data
+  prometheus-data:
+    name: mall-prometheus-data
+  grafana-data:
+    name: mall-grafana-data
+  jenkins-data:
+    name: mall-jenkins-data
